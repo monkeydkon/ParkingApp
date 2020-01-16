@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">ParkingApp</string>
+    <string name="don_t_have_an_account_click_here_to_make_one">Don\'t have an account? Click here to make one.</string>
+    <string name="loginToContinue">Login to continue</string>
+    <string name="loginUsername">username</string>
+    <string name="loginPassword">password</string>
+    <string name="loginLogin">Login</string>
+    <string name="signupFirstName">First Name</string>
+    <string name="signupLastName">Last Name</string>
+    <string name="signupEmail">Email</string>
+    <string name="signupPassword">Password</string>
+    <string name="signupConfirmPassword">Confirm Password</string>
+    <string name="signupButton">Sign Up</string>
+    <string name="requiredField">Required Field</string>
+    <string name="equaltopassword">Must be same as password</string>
+</resources>

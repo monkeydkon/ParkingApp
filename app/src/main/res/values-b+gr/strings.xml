@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">ParkingApp</string>
+    <string name="don_t_have_an_account_click_here_to_make_one">Δεν έχετε λογαριασμό; Πατήστε εδώ για να φτιάξετε.</string>
+    <string name="loginToContinue">Συνδεθείτε για να συνεχίσετε</string>
+    <string name="loginUsername">ψευδόνυμο</string>
+    <string name="loginPassword">κωδικός</string>
+    <string name="loginLogin">Σύνδεση</string>
+    <string name="signupFirstName">Όνομα</string>
+    <string name="signupLastName">Επίθετο</string>
+    <string name="signupEmail">Email</string>
+    <string name="signupPassword">Κωδικός</string>
+    <string name="signupConfirmPassword">Επιβεβαίωση κωδικού</string>
+    <string name="signupButton">Εγγραφή</string>
+    <string name="requiredField">Απαραίτητο πεδίο</string>
+    <string name="equaltopassword">Πρέπει να είναι ίδιο με τον κωδικό</string>
+</resources>
