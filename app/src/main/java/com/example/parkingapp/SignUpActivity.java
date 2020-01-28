@@ -76,23 +76,7 @@ public class SignUpActivity extends AppCompatActivity {
                     signUpConfirmPasswordEditText.setError(getResources().getString(R.string.equaltopassword));
                     return;
                 }
-//                try {
-//                    String userObject = new JSONObject()
-//                            .put("firstName",signUpFirstNameEditText.getText().toString())
-//                            .put("lastname", signUpLastNameEditText.getText().toString())
-//                            .put("email", signUpLastNameEditText.getText().toString())
-//                            .put("password", signUpPasswordEditText.getText().toString())
-//                            .toString();
-//
-//                    Map<String, String> jsonMap = new Gson().fromJson(userObject, new TypeToken<HashMap<String, Object>>(){}.getType());
-//                    myRef.push().setValue(jsonMap);
-//                } catch (JSONException e) {
-//                    e.printStackTrace();
-//                }
-//                Toast.makeText(getApplicationContext(),"Sign Up successfull", Toast.LENGTH_SHORT).show();
-//                Intent intent = new Intent(SignUpActivity.this, MainActivity.class);
-//                startActivity(intent);
-//                finish();
+
                 mAuth.createUserWithEmailAndPassword(signUpEmailEditText.getText().toString(),signUpPasswordEditText.getText().toString()).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
@@ -104,8 +88,7 @@ public class SignUpActivity extends AppCompatActivity {
                                   String userObject = new JSONObject()
                                           .put("firstName",signUpFirstNameEditText.getText().toString())
                             .put("lastname", signUpLastNameEditText.getText().toString())
-                            .put("email", signUpLastNameEditText.getText().toString())
-                            .put("password", signUpPasswordEditText.getText().toString())
+                            .put("email", signUpEmailEditText.getText().toString())
                             .toString();
 
                     Map<String, String> jsonMap = new Gson().fromJson(userObject, new TypeToken<HashMap<String, Object>>(){}.getType());
