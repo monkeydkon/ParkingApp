@@ -7,25 +7,36 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.concurrent.TimeUnit;
 
 public class ParkingSpotsActivity extends AppCompatActivity {
-
+    private FirebaseAuth mAuth;
     View spot01,spot02,spot03,spot04,spot05,spot06,spot07,spot08,spot09,spot10,spot11,spot12,spot13,spot14,spot15,spot16,spot17,spot18,spot19,spot20,spot21,spot22,spot23,spot24;
     ArrayList<Spot> spotList;
     ArrayList<View> spotViewList;
     Context context;
+    DatabaseReference reference;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,18 +45,27 @@ public class ParkingSpotsActivity extends AppCompatActivity {
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
         final DatabaseReference myRef = database.getReference("spots");
 
+        mAuth = FirebaseAuth.getInstance();
+        reference = database.getReference();
+
         context = this;
 
         spotList = new ArrayList<>();
         spotViewList = new ArrayList<>();
 
         spotInits();
-        myRef.addValueEventListener(new ValueEventListener() {
+        myRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if(!dataSnapshot.exists()) return;
                 for(DataSnapshot ds : dataSnapshot.getChildren()){
-                    Spot spot = new Spot(ds.getKey(), (Boolean) ds.child("available").getValue());
+                    Spot spot;
+                    if(ds.child("by").exists()){
+                        spot = new Spot(ds.getKey(), (Boolean) ds.child("available").getValue(), ds.child("by").getValue().toString());
+                    }else{
+                        spot = new Spot(ds.getKey(), (Boolean) ds.child("available").getValue());
+                    }
+
                     spotList.add(spot);
                 }
 
@@ -55,7 +75,32 @@ public class ParkingSpotsActivity extends AppCompatActivity {
                     }else{
                         spotViewList.get(i).setBackgroundColor(Color.parseColor("#f28574"));
                     }
+
+                    if(spotList.get(i).getBy().equals(mAuth.getUid())){
+                        spotViewList.get(i).setBackgroundColor(Color.parseColor("#111111"));
+                    }
                 }
+
+//                reference.child("users").child(mAuth.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+//                    @Override
+//                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//                        if(!dataSnapshot.exists()) return;
+//
+//                        if (dataSnapshot.child("car").exists()){
+//                           String ownSpot =  dataSnapshot.child("car").child("spot").getValue().toString();
+//                           for(int j = 0; j<spotViewList.size(); j++){
+//                               if(ownSpot.equals(getResources().getResourceEntryName(spotViewList.get(j).getId()))){
+//                                   spotViewList.get(j).setBackgroundColor(Color.parseColor("#111111"));
+//                               }
+//                           }
+//                        }
+//                    }
+//
+//                    @Override
+//                    public void onCancelled(@NonNull DatabaseError databaseError) {
+//
+//                    }
+//                });
             }
 
             @Override
@@ -77,16 +122,77 @@ public class ParkingSpotsActivity extends AppCompatActivity {
             System.out.println("wow "+ getResources().getResourceEntryName(v.getId()));
             for(int i = 0; i<spotList.size(); i++){
                 if(spotList.get(i).getKey().equals(getResources().getResourceEntryName(v.getId()))){
+
+                    ColorDrawable viewColor = (ColorDrawable) spotViewList.get(i).getBackground();
+                    int color = viewColor.getColor();
+
+
+                    if(spotList.get(i).getBy().equals(mAuth.getUid())){
+//                        Toast.makeText(getApplicationContext(), "yours bro ;)", Toast.LENGTH_SHORT).show();
+//                        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+//                        builder.setMessage("You want to ")
+                        final FirebaseDatabase database = FirebaseDatabase.getInstance();
+                        database.getReference("users").child(mAuth.getUid()).child("car").child("datetime").addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                if(dataSnapshot.exists()){
+                                    DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+
+                                    Calendar cal = Calendar.getInstance();
+
+                                    Date now = null;
+                                    Date then = null;
+                                    try {
+                                        now = dateFormat.parse(dateFormat.format(cal.getTime()));
+                                    } catch (ParseException e) {
+                                        e.printStackTrace();
+                                    }
+
+
+                                    try {
+                                        then = dateFormat.parse(dataSnapshot.getValue().toString());
+                                    } catch (ParseException e) {
+                                        e.printStackTrace();
+                                    }
+
+                                    long diffInMillies = Math.abs(now.getTime() - then.getTime());
+                                    long diff = TimeUnit.MINUTES.convert(diffInMillies, TimeUnit.MILLISECONDS);
+
+                                    Toast.makeText(getApplicationContext(), String.valueOf(diff), Toast.LENGTH_SHORT).show();
+
+                                    }
+//
+                                }
+
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                            }
+                        });
+                    }
+
+
                     if(spotList.get(i).getValue()){
 
                         AlertDialog.Builder builder = new AlertDialog.Builder(context);
                         builder.setMessage("You wanna close this spot? The price is 5$ per hour.");
                         builder.setCancelable(true);
 
+                        final int finalI = i;
                         builder.setPositiveButton("yes", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
+                                startActivity(new Intent(ParkingSpotsActivity.this, ParkingActivity.class));
+                                DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+                                Calendar cal = Calendar.getInstance();
+                            //    System.out.println();
+                                reference.child("users").child(mAuth.getUid()).child("car").setValue(new Car(spotList.get(finalI).getKey(), dateFormat.format(cal.getTime())));
+                                reference.child("spots").child(spotList.get(finalI).getKey()).child("available").setValue(false);
+                                reference.child("spots").child(spotList.get(finalI).getKey()).child("by").setValue(mAuth.getUid());
+
                                 dialog.cancel();
+                                finish();
                             }
                         });
                         builder.setNegativeButton("no", new DialogInterface.OnClickListener() {

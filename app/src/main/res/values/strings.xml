@@ -13,5 +13,9 @@
     <string name="signupButton">Sign Up</string>
     <string name="requiredField">Required Field</string>
     <string name="equaltopassword">Must be same as password</string>
-    <string name="title_activity_maps">Map</string>
+
+    <string name="title_activity_maps">Map Activity</string>
+    <string name="add_start_point">Starting Point</string>
+    <string name="destination">Destination</string>
+
 </resources>
