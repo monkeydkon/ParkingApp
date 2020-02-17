@@ -156,7 +156,7 @@ public class ParkingSpotsActivity extends AppCompatActivity {
                                     }
 
                                     long diffInMillies = Math.abs(now.getTime() - then.getTime());
-                                    long diff = TimeUnit.MINUTES.convert(diffInMillies, TimeUnit.MILLISECONDS);
+                                    long diff = TimeUnit.HOURS.convert(diffInMillies, TimeUnit.MILLISECONDS);
 
                                     Toast.makeText(getApplicationContext(), String.valueOf(diff), Toast.LENGTH_SHORT).show();
 

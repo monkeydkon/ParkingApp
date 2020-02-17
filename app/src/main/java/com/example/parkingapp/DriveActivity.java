@@ -36,6 +36,7 @@ public class DriveActivity extends AppCompatActivity {
     LocationManager locManager;
     LocationListener li;
     TextView speedTextView;
+    SensorEventListener sensorEventListener;
     LinearLayout myLayout;
     Boolean illegal = false;
     Context that;
@@ -92,33 +93,9 @@ public class DriveActivity extends AppCompatActivity {
             Toast.makeText(this, getResources().getString(R.string.noLightSensor), Toast.LENGTH_SHORT).show();
         }
 
+        sensorEventListener = new DriveActivity.light();
 
-        sensorManager.registerListener(new SensorEventListener() {
-            @Override
-            public void onSensorChanged(SensorEvent event) {
-                System.out.println(event.values[0]);
-
-                if(event.values[0] < 10){
-
-                    Intent intent = new Intent(that, DriveActivity.class);
-                    intent.setAction(Intent.ACTION_RUN);
-
-                    NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext(), "123123")
-                            .setSmallIcon(R.drawable.ic_stat_name)
-                            .setContentTitle("Warning")
-                            .setContentText("The lighting is low. Maybe you should open your lights.")
-                            .setPriority(NotificationCompat.PRIORITY_HIGH);
-
-                    NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(that);
-                    notificationManagerCompat.notify((int)Math.ceil(Math.random()),builder.build());
-                }
-            }
-
-            @Override
-            public void onAccuracyChanged(Sensor sensor, int accuracy) {
-
-            }
-        }, light, SensorManager.SENSOR_DELAY_NORMAL);
+        sensorManager.registerListener(sensorEventListener, light, 13);
 
     }
 
@@ -152,6 +129,35 @@ public class DriveActivity extends AppCompatActivity {
     public void onBackPressed() {
         super.onBackPressed();
         finish();
+        sensorManager.unregisterListener(sensorEventListener);
+
+    }
+
+
+    class light implements SensorEventListener{
+
+        @Override
+        public void onSensorChanged(SensorEvent event) {
+            if(event.values[0] < 10){
+
+                Intent intent = new Intent(that, DriveActivity.class);
+                intent.setAction(Intent.ACTION_RUN);
+
+                NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext(), "123123")
+                        .setSmallIcon(R.drawable.ic_stat_name)
+                        .setContentTitle("Warning")
+                        .setContentText("The lighting is low. Maybe you should open your lights.")
+                        .setPriority(NotificationCompat.PRIORITY_HIGH);
+
+                NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(that);
+                notificationManagerCompat.notify((int)Math.ceil(Math.random()),builder.build());
+            }
+        }
+
+        @Override
+        public void onAccuracyChanged(Sensor sensor, int accuracy) {
+
+        }
     }
 
 
