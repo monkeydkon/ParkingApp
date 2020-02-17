@@ -14,4 +14,28 @@
     <string name="signupButton">Εγγραφή</string>
     <string name="requiredField">Απαραίτητο πεδίο</string>
     <string name="equaltopassword">Πρέπει να είναι ίδιο με τον κωδικό</string>
+
+    <string name="driveMode">Λειτουργία οδήγησης</string>
+    <string name="seeSpots">Όλες οι θέσεις</string>
+    <string name="findCar">Αναζήτηση αυτοκινήτου</string>
+    <string name="settings">Γλώσσα</string>
+    <string name="logout">Αποσύνδεση</string>
+
+    <string name="loading">Φόρτωση...</string>
+
+    <string name="greek">Ελληνικά</string>
+    <string name="english">Αγγλικά</string>
+
+    <string name="spotNotAvailable">Μη διαθέσιμη θέση</string>
+    <string name="closeSpotQuestion">Θέλετε να κλείσετε αυτή την θέση; Κοστίζει 5$ την ώρα.</string>
+
+    <string name="yes">Ναι</string>
+    <string name="no">Οχι</string>
+
+    <string name="noLightSensor">Αυτή η συσκευή δεν έχει αισθητρήα φωτός.</string>
+
+    <string name="warning">Προσοχή!</string>
+
+
+
 </resources>

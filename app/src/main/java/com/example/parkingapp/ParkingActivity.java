@@ -19,7 +19,7 @@ import com.google.firebase.database.ValueEventListener;
 
 public class ParkingActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
-    Button goToParkingSpotsButton, goToMapsButton, logoutButton;
+    Button goToParkingSpotsButton, goToMapsButton, logoutButton, languageButton, driveModeButton;
     Boolean showCarButton = false;
 
     @Override
@@ -30,6 +30,8 @@ public class ParkingActivity extends AppCompatActivity {
         goToParkingSpotsButton = findViewById(R.id.goToParkingSpotsButton);
         goToMapsButton = findViewById(R.id.goToMapsButton);
         logoutButton = findViewById(R.id.logoutButton);
+        driveModeButton = findViewById(R.id.driveModeButton);
+        languageButton = findViewById(R.id.languageButton);
 
         goToMapsButton.setEnabled(showCarButton);
 
@@ -77,6 +79,20 @@ public class ParkingActivity extends AppCompatActivity {
                 startActivity(new Intent(ParkingActivity.this, MainActivity.class));
                 finish();
                 mAuth.signOut();
+            }
+        });
+
+        driveModeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(ParkingActivity.this, DriveActivity.class));
+            }
+        });
+
+        languageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(ParkingActivity.this, Language.class));
             }
         });
 

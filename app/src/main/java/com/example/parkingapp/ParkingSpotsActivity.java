@@ -176,11 +176,11 @@ public class ParkingSpotsActivity extends AppCompatActivity {
                     if(spotList.get(i).getValue()){
 
                         AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                        builder.setMessage("You wanna close this spot? The price is 5$ per hour.");
+                        builder.setMessage(getResources().getString(R.string.closeSpotQuestion));
                         builder.setCancelable(true);
 
                         final int finalI = i;
-                        builder.setPositiveButton("yes", new DialogInterface.OnClickListener() {
+                        builder.setPositiveButton(getResources().getString(R.string.yes), new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 startActivity(new Intent(ParkingSpotsActivity.this, ParkingActivity.class));
@@ -195,7 +195,7 @@ public class ParkingSpotsActivity extends AppCompatActivity {
                                 finish();
                             }
                         });
-                        builder.setNegativeButton("no", new DialogInterface.OnClickListener() {
+                        builder.setNegativeButton(getResources().getString(R.string.no), new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 dialog.cancel();
@@ -205,7 +205,7 @@ public class ParkingSpotsActivity extends AppCompatActivity {
                         AlertDialog alert = builder.create();
                         alert.show();
                     }else{
-                        Toast.makeText(getApplicationContext(), "This spot is not available", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), getResources().getString(R.string.spotNotAvailable), Toast.LENGTH_LONG).show();
                     }
                 }
             }
