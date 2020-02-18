@@ -72,6 +72,10 @@ public class SignUpActivity extends AppCompatActivity {
                     signUpPasswordEditText.setError(getResources().getString(R.string.requiredField));
                     return;
                 }
+                if(signUpPasswordEditText.getText().toString().length() < 8){
+                    signUpPasswordEditText.setError(getResources().getString(R.string.passlesseight));
+                    return;
+                }
                 if (!signUpConfirmPasswordEditText.getText().toString().equals(signUpPasswordEditText.getText().toString())) {
                     signUpConfirmPasswordEditText.setError(getResources().getString(R.string.equaltopassword));
                     return;

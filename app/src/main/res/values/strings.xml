@@ -14,6 +14,8 @@
     <string name="requiredField">Required Field</string>
     <string name="equaltopassword">Must be same as password</string>
 
+    <string name="passlesseight">At least 8 digits</string>
+
     <string name="driveMode">Drive Mode</string>
     <string name="seeSpots">See Spots</string>
     <string name="findCar">Find Car</string>

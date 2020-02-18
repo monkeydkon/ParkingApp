@@ -91,7 +91,10 @@ public class ParkingActivity extends AppCompatActivity {
         logoutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(ParkingActivity.this, MainActivity.class));
+                Intent intent1 = new Intent(ParkingActivity.this, MainActivity.class);
+                intent1.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+
+                startActivity(intent1);
                 finish();
                 mAuth.signOut();
             }
@@ -100,6 +103,7 @@ public class ParkingActivity extends AppCompatActivity {
         driveModeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 startActivity(new Intent(ParkingActivity.this, DriveActivity.class));
             }
         });
