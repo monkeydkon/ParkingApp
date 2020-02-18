@@ -86,6 +86,7 @@ public class DriveActivity extends AppCompatActivity {
         }
 
 
+        // sensor for light events
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         light = sensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
 
@@ -145,7 +146,7 @@ public class DriveActivity extends AppCompatActivity {
 
                 NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext(), "123123")
                         .setSmallIcon(R.drawable.ic_stat_name)
-                        .setContentTitle("Warning")
+                        .setContentTitle(getResources().getString(R.string.warning))
                         .setContentText("The lighting is low. Maybe you should open your lights.")
                         .setPriority(NotificationCompat.PRIORITY_HIGH);
 
@@ -178,7 +179,7 @@ public class DriveActivity extends AppCompatActivity {
 
                     NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext(), "123123")
                             .setSmallIcon(R.drawable.ic_stat_name)
-                            .setContentTitle("Warning")
+                            .setContentTitle(getResources().getString(R.string.warning))
                             .setContentText("You are above the speed limit!")
                             .setPriority(NotificationCompat.PRIORITY_HIGH);
 

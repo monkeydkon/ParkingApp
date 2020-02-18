@@ -35,6 +35,24 @@
     <string name="noLightSensor">Αυτή η συσκευή δεν έχει αισθητρήα φωτός.</string>
 
     <string name="warning">Προσοχή!</string>
+    <string name="lowLights">Χαμηλός φωτισμός. Ανάψτε φώτα.</string>
+    <string name="speedLimit">Τρέχετε με πάνω απο το όριο ταχύτητας.</string>
+
+    <string name="leaveSpot">Θέλετε να φύγετε; Η χρέωση είναι </string>
+
+    <string name="youCannot">Έχετε ήδη παρκρισμένο αμάξι.</string>
+
+    <string name="cardText">Αριθμός κάρτας</string>
+
+    <string name="ok">OK</string>
+    <string name="cancel">Ακύρωση</string>
+
+    <string name="paid">Πληρωμή επιτυχής</string>
+
+    <string name="loginFail">Αποτυχία σύνδεσης. Παρακαλώ προσπαθήστε ξανά.</string>
+
+
+
 
 
 

@@ -2,6 +2,8 @@ package com.example.parkingapp;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 
 import android.content.Intent;
 
@@ -36,6 +38,19 @@ public class ParkingActivity extends AppCompatActivity {
         goToMapsButton.setEnabled(showCarButton);
 
         mAuth = FirebaseAuth.getInstance();
+
+        Intent intent = getIntent();
+        Boolean paid = intent.getBooleanExtra("paid",false);
+
+        if(paid){
+            NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext(), "123123")
+                    .setSmallIcon(R.drawable.ic_stat_name)
+                    .setContentText(getResources().getString(R.string.paid))
+                    .setPriority(NotificationCompat.PRIORITY_HIGH);
+
+            NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(getApplicationContext());
+            notificationManagerCompat.notify((int)Math.ceil(Math.random()),builder.build());
+        }
 
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
         final DatabaseReference myRef = database.getReference("users").child(mAuth.getUid());

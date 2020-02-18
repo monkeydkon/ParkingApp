@@ -48,9 +48,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener, LocationListener{
+public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener{
 
+    int time = 1; // to only refresh map the first time location is found
     private GoogleMap mMap;
     GoogleMap mGoogleMap;
     Location mLastLocation;
@@ -63,12 +63,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     LocationManager locManager;
     Marker mCurrLocationMarker;
 
-    LocationListener li;
-
     @Override
     protected void onPause() {
         super.onPause();
         if (mGoogleApiClient != null) {
+            //stop monitoring
             LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient,  this);
         }
     }
@@ -96,47 +95,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-//        mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
-//            @Override
-//            public void onMapClick(LatLng point) {
-//                // Already two locations
-//                if(mMarkerPoints.size()>1){
-//                    mMarkerPoints.clear();
-//                    mMap.clear();
-//                }
-//
-//                // Adding new item to the ArrayList
-//                mMarkerPoints.add(point);
-//
-//                // Creating MarkerOptions
-//                MarkerOptions options = new MarkerOptions();
-//
-//                // Setting the position of the marker
-//                options.position(point);
-//
-//                /**
-//                 * For the start location, the color of marker is GREEN and
-//                 * for the end location, the color of marker is RED.
-//                 */
-//                if(mMarkerPoints.size()==1){
-//                    options.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
-//                }else if(mMarkerPoints.size()==2){
-//                    options.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
-//                }
-//
-//                // Add new marker to the Google Map Android API V2
-//                mMap.addMarker(options);
-//
-//                // Checks, whether start and end locations are captured
-//                if(mMarkerPoints.size() >= 2){
-//                    mOrigin = mMarkerPoints.get(0);
-//                    mDestination = mMarkerPoints.get(1);
-//                    drawRoute();
-//                }
-//
-//            }
-//        });
-
         mGoogleMap = googleMap;
         mGoogleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
 
@@ -149,8 +107,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 buildGoogleApiClient();
                 mGoogleMap.setMyLocationEnabled(true);
             } else {
+
                 //Request Location Permission
-              //  checkLocationPermission();
                 if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                         != PackageManager.PERMISSION_GRANTED) {
 
@@ -186,6 +144,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 }
             }
         } else {
+            // already granted
             buildGoogleApiClient();
 
         }
@@ -193,6 +152,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
 
     protected synchronized void buildGoogleApiClient() {
+        // google api initialize
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
@@ -277,51 +237,45 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     @Override
     public void onLocationChanged(Location location) {
-        mLastLocation = location;
-        if (mCurrLocationMarker != null) {
-            mCurrLocationMarker.remove();
-        }
-
-        //Place current location marker
-        LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-        MarkerOptions markerOptions = new MarkerOptions();
-        markerOptions.position(latLng);
-        markerOptions.title("Current Position");
-        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
-        mCurrLocationMarker = mGoogleMap.addMarker(markerOptions);
 
 
 
-        //move map camera
-        mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng,11));
+        if(time == 1){
+            mLastLocation = location;
+            if (mCurrLocationMarker != null) {
+                mCurrLocationMarker.remove();
+            }
+
+            //Place current location marker
+            LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+            MarkerOptions markerOptions = new MarkerOptions();
+            markerOptions.position(latLng);
+            markerOptions.title("Current Position");
+            markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
+            mCurrLocationMarker = mGoogleMap.addMarker(markerOptions);
+            mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng,11));
 
 //                // Adding new item to the ArrayList
-                mMarkerPoints.add(latLng);
+            mMarkerPoints.add(latLng);
 //
 //                // Creating MarkerOptions
-                MarkerOptions options = new MarkerOptions();
+            MarkerOptions options = new MarkerOptions();
 //
-                // Setting the position of the marker
-                options.position(latLng);
+            // Setting the position of the marker
+            options.position(latLng);
 //
-//                /**
-//                 * For the start location, the color of marker is GREEN and
-//                 * for the end location, the color of marker is RED.
-//                 */
-//                if(mMarkerPoints.size()==1){
-//                    options.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
-//                }else if(mMarkerPoints.size()==2){
-//                    options.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
-//                }
 //
 //                // Add new marker to the Google Map Android API V2
-                mMarkerPoints.add(new LatLng(37.9415137,23.6528681));
-//
-//                // Checks, whether start and end locations are captured
-//                if(mMarkerPoints.size() >= 2){
-                    mOrigin = mMarkerPoints.get(0);
-                    mDestination = mMarkerPoints.get(1);
-                    drawRoute();
+            mMarkerPoints.add(new LatLng(37.9415137,23.6528681));
+
+            mOrigin = mMarkerPoints.get(0);
+            mDestination = mMarkerPoints.get(1);
+            drawRoute();
+
+            time++;
+        }
+        //move map camera
+
 //                }
     }
 

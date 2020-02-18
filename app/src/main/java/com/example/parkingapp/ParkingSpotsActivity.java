@@ -1,16 +1,19 @@
 package com.example.parkingapp;
 
-import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.os.Build;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Toast;
 
@@ -27,7 +30,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
 
 public class ParkingSpotsActivity extends AppCompatActivity {
@@ -37,7 +39,6 @@ public class ParkingSpotsActivity extends AppCompatActivity {
     ArrayList<View> spotViewList;
     Context context;
     DatabaseReference reference;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,15 +46,29 @@ public class ParkingSpotsActivity extends AppCompatActivity {
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
         final DatabaseReference myRef = database.getReference("spots");
 
+        // init notification channel
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = "channelName";
+            String description = "channelDescription";
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel channel = new NotificationChannel("123123", name, importance);
+            channel.setDescription(description);
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
+
         mAuth = FirebaseAuth.getInstance();
         reference = database.getReference();
 
+        //get context to use later
         context = this;
 
-        spotList = new ArrayList<>();
-        spotViewList = new ArrayList<>();
+        spotList = new ArrayList<>(); //spots array
+        spotViewList = new ArrayList<>(); //spots VIEWS array
 
-        spotInits();
+        spotInits(); // init all spots
+
+        // take a look in to database => spots / put into array / and color accordingly
         myRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -80,27 +95,6 @@ public class ParkingSpotsActivity extends AppCompatActivity {
                         spotViewList.get(i).setBackgroundColor(Color.parseColor("#111111"));
                     }
                 }
-
-//                reference.child("users").child(mAuth.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
-//                    @Override
-//                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//                        if(!dataSnapshot.exists()) return;
-//
-//                        if (dataSnapshot.child("car").exists()){
-//                           String ownSpot =  dataSnapshot.child("car").child("spot").getValue().toString();
-//                           for(int j = 0; j<spotViewList.size(); j++){
-//                               if(ownSpot.equals(getResources().getResourceEntryName(spotViewList.get(j).getId()))){
-//                                   spotViewList.get(j).setBackgroundColor(Color.parseColor("#111111"));
-//                               }
-//                           }
-//                        }
-//                    }
-//
-//                    @Override
-//                    public void onCancelled(@NonNull DatabaseError databaseError) {
-//
-//                    }
-//                });
             }
 
             @Override
@@ -108,33 +102,22 @@ public class ParkingSpotsActivity extends AppCompatActivity {
 
             }
         });
-
         setListeners();
-
-
-
-
     }
 
     View.OnClickListener listener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            System.out.println("wow "+ getResources().getResourceEntryName(v.getId()));
             for(int i = 0; i<spotList.size(); i++){
                 if(spotList.get(i).getKey().equals(getResources().getResourceEntryName(v.getId()))){
 
-                    ColorDrawable viewColor = (ColorDrawable) spotViewList.get(i).getBackground();
-                    int color = viewColor.getColor();
-
-
+                    // if spot clicked ID is equal to the login user ID (which means its my own spot)
                     if(spotList.get(i).getBy().equals(mAuth.getUid())){
-//                        Toast.makeText(getApplicationContext(), "yours bro ;)", Toast.LENGTH_SHORT).show();
-//                        AlertDialog.Builder builder = new AlertDialog.Builder(context);
-//                        builder.setMessage("You want to ")
                         final FirebaseDatabase database = FirebaseDatabase.getInstance();
+                        final int finalI1 = i;
                         database.getReference("users").child(mAuth.getUid()).child("car").child("datetime").addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
-                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            public void onDataChange(@NonNull final DataSnapshot dataSnapshot) {
                                 if(dataSnapshot.exists()){
                                     DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 
@@ -158,21 +141,77 @@ public class ParkingSpotsActivity extends AppCompatActivity {
                                     long diffInMillies = Math.abs(now.getTime() - then.getTime());
                                     long diff = TimeUnit.HOURS.convert(diffInMillies, TimeUnit.MILLISECONDS);
 
-                                    Toast.makeText(getApplicationContext(), String.valueOf(diff), Toast.LENGTH_SHORT).show();
 
+                                    final AlertDialog.Builder secondBuilder = new AlertDialog.Builder(context);
+                                    LayoutInflater inflater = getLayoutInflater();
+                                    secondBuilder.setView(inflater.inflate(R.layout.pay_dialog,null))
+                                            .setPositiveButton(getResources().getString(R.string.ok), new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialog, int which) {
+
+                                                        startActivity(new Intent(ParkingSpotsActivity.this, ParkingActivity.class).putExtra("paid",true));
+                                                        finish();
+                                                        database.getReference("users").child(mAuth.getUid()).child("car").removeValue();
+                                                        database.getReference("spots").child(spotList.get(finalI1).getKey()).child("by").removeValue();
+                                                        database.getReference("spots").child(spotList.get(finalI1).getKey()).child("available").setValue(true);
+                                                }
+                                            })
+                                            .setNegativeButton(getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialog, int which) {
+                                                }
+                                            });
+
+
+                                    AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                                    builder.setMessage(getResources().getString(R.string.leaveSpot) + " " + String.valueOf(diff+1 * 5) + "$");
+                                    builder.setCancelable(true);
+
+                                    builder.setPositiveButton(getResources().getString(R.string.yes), new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+
+                                            dialog.cancel();
+
+                                            AlertDialog alert2 = secondBuilder.create();
+                                            alert2.setCancelable(false);
+                                            alert2.setCanceledOnTouchOutside(false);
+                                            alert2.show();
+                                        }
+                                    });
+
+
+                                    builder.setNegativeButton(getResources().getString(R.string.no), new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            dialog.cancel();
+                                        }
+                                    });
+
+                                    AlertDialog alert = builder.create();
+                                    alert.show();
                                     }
-//
                                 }
-
 
                             @Override
                             public void onCancelled(@NonNull DatabaseError databaseError) {
 
                             }
                         });
+                        return;
                     }
 
+                    // if i am parked disable default click and return
+                    for(int j = 0; j < spotList.size(); j++){
+                        if (spotList.get(j).getBy().equals(mAuth.getUid())){
+                            Toast.makeText(getApplicationContext(),getResources().getString(R.string.youCannot), Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                    }
 
+                    // else
+
+                    //if available
                     if(spotList.get(i).getValue()){
 
                         AlertDialog.Builder builder = new AlertDialog.Builder(context);
@@ -204,6 +243,8 @@ public class ParkingSpotsActivity extends AppCompatActivity {
 
                         AlertDialog alert = builder.create();
                         alert.show();
+
+                        //if not available
                     }else{
                         Toast.makeText(getApplicationContext(), getResources().getString(R.string.spotNotAvailable), Toast.LENGTH_LONG).show();
                     }
@@ -213,6 +254,7 @@ public class ParkingSpotsActivity extends AppCompatActivity {
     };
 
 
+    //all "spots" have the same click listener
     private void setListeners(){
         spot01.setOnClickListener(listener);
         spot02.setOnClickListener(listener);
@@ -241,6 +283,7 @@ public class ParkingSpotsActivity extends AppCompatActivity {
 
     }
 
+    //view and list initialize
     private void spotInits() {
         spot01 = findViewById(R.id.spot01);
         spot02 = findViewById(R.id.spot02);
@@ -291,8 +334,6 @@ public class ParkingSpotsActivity extends AppCompatActivity {
         spotViewList.add(spot22);
         spotViewList.add(spot23);
         spotViewList.add(spot24);
-
-
 
     }
 }

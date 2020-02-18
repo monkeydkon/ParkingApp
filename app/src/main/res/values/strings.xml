@@ -34,6 +34,21 @@
     <string name="noLightSensor">This device has no light sensor</string>
     
     <string name="warning">Warning</string>
+    <string name="lowLights">The lighting is low. Maybe you should open your lights.</string>
+    <string name="speedLimit">You are above the speed limit!</string>
+
+    <string name="leaveSpot">Do you want to leave? The price is </string>
+
+    <string name="youCannot">You are already parked.</string>
+
+    <string name="cardText">Your Card number</string>
+
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
+    
+    <string name="paid">Payment successfull</string>
+
+    <string name="loginFail">Login failed. Please try again!</string>
 
 
     <string name="title_activity_maps">Map Activity</string>

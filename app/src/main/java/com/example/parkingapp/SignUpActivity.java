@@ -77,6 +77,7 @@ public class SignUpActivity extends AppCompatActivity {
                     return;
                 }
 
+                //firebase auth (is also auto login)
                 mAuth.createUserWithEmailAndPassword(signUpEmailEditText.getText().toString(),signUpPasswordEditText.getText().toString()).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {

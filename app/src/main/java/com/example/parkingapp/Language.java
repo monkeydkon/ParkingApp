@@ -24,6 +24,16 @@ public class Language extends AppCompatActivity {
         englishButton = findViewById(R.id.englishButton);
         greekButton = findViewById(R.id.greekButton);
 
+        // get current language and disable button accordingly
+        Locale current = getResources().getConfiguration().locale;
+        System.out.println("LANGA" + current);
+        if(current.toString().equals("gr")){
+            greekButton.setEnabled(false);
+        }else if(current.toString().equals("en_US")){
+            englishButton.setEnabled(false);
+        }
+
+
         englishButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -39,6 +49,8 @@ public class Language extends AppCompatActivity {
         });
     }
 
+
+    //set language
     public void setLocale(String lang) {
         Locale myLocale = new Locale(lang);
         Resources res = getResources();
@@ -47,7 +59,11 @@ public class Language extends AppCompatActivity {
         conf.locale = myLocale;
         res.updateConfiguration(conf, dm);
         Intent refresh = new Intent(this, MainActivity.class);
+        refresh.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+
         finish();
         startActivity(refresh);
+
+
     }
 }

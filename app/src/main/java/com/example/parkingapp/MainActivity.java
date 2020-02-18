@@ -63,6 +63,7 @@ public class MainActivity extends AppCompatActivity {
                 String email = loginEmailEditText.getText().toString();
                 String password = loginPasswordEditText.getText().toString();
 
+                //firebase authentication
                 mAuth.signInWithEmailAndPassword(email, password)
                         .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                             @Override
@@ -75,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
                                     finish();
                                 }else{
                                     System.out.println("login error " + task.getException());
-                                    Toast.makeText(getApplicationContext(), "fail", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(getApplicationContext(), getResources().getString(R.string.loginFail), Toast.LENGTH_SHORT).show();
                                 }
                             }
                         });
@@ -90,22 +91,11 @@ public class MainActivity extends AppCompatActivity {
         super.onStart();
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if(currentUser != null){
-            Toast.makeText(getApplicationContext(), "Already Logged in", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(getApplicationContext(), "Already Logged in", Toast.LENGTH_SHORT).show();
             Intent intent = new Intent(MainActivity.this, ParkingActivity.class);
             startActivity(intent);
             finish();
         }
     }
 
-    public void setLocale(String lang) {
-        Locale myLocale = new Locale(lang);
-        Resources res = getResources();
-        DisplayMetrics dm = res.getDisplayMetrics();
-        Configuration conf = res.getConfiguration();
-        conf.locale = myLocale;
-        res.updateConfiguration(conf, dm);
-        Intent refresh = new Intent(this, MainActivity.class);
-        finish();
-        startActivity(refresh);
-    }
 }
