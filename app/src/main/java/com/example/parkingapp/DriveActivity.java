@@ -38,7 +38,7 @@ public class DriveActivity extends AppCompatActivity {
     TextView speedTextView;
     SensorEventListener sensorEventListener;
     LinearLayout myLayout;
-    Boolean illegal = false;
+    //Boolean illegal = false;
     Context that;
 
     private SensorManager sensorManager;
@@ -82,7 +82,8 @@ public class DriveActivity extends AppCompatActivity {
             // start checking for location changes
             locManager=(LocationManager)getSystemService(Context.LOCATION_SERVICE);
             li = new DriveActivity.speed();
-            locManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, li);
+            locManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, li);
+            System.out.println("goes");
         }
 
 
@@ -116,6 +117,7 @@ public class DriveActivity extends AppCompatActivity {
                     locManager=(LocationManager)getSystemService(Context.LOCATION_SERVICE);
                     li=new DriveActivity.speed();
                     locManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, li);
+                    System.out.println("once more");
                 } else {
 
                 }
@@ -131,6 +133,7 @@ public class DriveActivity extends AppCompatActivity {
         super.onBackPressed();
         finish();
         sensorManager.unregisterListener(sensorEventListener);
+        locManager.removeUpdates(li);
 
     }
 
@@ -169,10 +172,12 @@ public class DriveActivity extends AppCompatActivity {
         public void onLocationChanged(Location loc) {
             Float thespeed=loc.getSpeed() * 3.6f; // speed to km/h
             speedTextView.setText(String.valueOf((int)Math.ceil(thespeed)));
-
-            if(loc.getSpeed() * 3.6 > 50){
-                if(!illegal){
+            System.out.println("goes here");
+            if(loc.getSpeed() * 3.6 > -1){
+              //  if(!illegal){
                     myLayout.setBackgroundColor(Color.rgb(255,0,0));
+
+                    System.out.println("goes here too" + " " + loc.getSpeed());
 
                     Intent intent = new Intent(that, DriveActivity.class);
                     intent.setAction(Intent.ACTION_RUN);
@@ -185,9 +190,9 @@ public class DriveActivity extends AppCompatActivity {
 
                     NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(that);
                     notificationManagerCompat.notify((int)Math.ceil(Math.random()),builder.build());
-                }
+             //   }
 
-                illegal=true;
+             //   illegal=true;
 
             }
         }
