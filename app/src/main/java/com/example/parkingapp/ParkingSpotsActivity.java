@@ -258,8 +258,8 @@ public class ParkingSpotsActivity extends AppCompatActivity {
 //                                alarms = (AlarmManager) getApplication().getSystemService(
 //                                        Context.ALARM_SERVICE);
                                 alarms.setRepeating(AlarmManager.RTC_WAKEUP,
-                                        1000,
-                                        10000, recurringDownload);
+                                        5000,
+                                        60000, recurringDownload);
 
                                 dialog.cancel();
                                 finish();
