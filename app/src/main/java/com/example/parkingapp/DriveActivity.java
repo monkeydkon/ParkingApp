@@ -64,6 +64,18 @@ public class DriveActivity extends AppCompatActivity {
             notificationManager.createNotificationChannel(channel);
         }
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = "channelName2";
+            String description = "channelDescription2";
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel channel = new NotificationChannel("678678", name, importance);
+            channel.setDescription(description);
+            // Register the channel with the system; you can't change the importance
+            // or other notification behaviors after this
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
+
         // context to use outsite
         that = this;
 
@@ -154,7 +166,7 @@ public class DriveActivity extends AppCompatActivity {
                         .setPriority(NotificationCompat.PRIORITY_HIGH);
 
                 NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(that);
-                notificationManagerCompat.notify((int)Math.ceil(Math.random()),builder.build());
+                notificationManagerCompat.notify(123123,builder.build());
             }
         }
 
@@ -182,14 +194,14 @@ public class DriveActivity extends AppCompatActivity {
                     Intent intent = new Intent(that, DriveActivity.class);
                     intent.setAction(Intent.ACTION_RUN);
 
-                    NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext(), "123123")
+                    NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext(), "678678")
                             .setSmallIcon(R.drawable.ic_stat_name)
                             .setContentTitle(getResources().getString(R.string.warning))
                             .setContentText("You are above the speed limit!")
                             .setPriority(NotificationCompat.PRIORITY_HIGH);
 
                     NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(that);
-                    notificationManagerCompat.notify((int)Math.ceil(Math.random()),builder.build());
+                    notificationManagerCompat.notify(678678,builder.build());
              //   }
 
              //   illegal=true;

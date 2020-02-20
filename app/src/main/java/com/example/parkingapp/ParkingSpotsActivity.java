@@ -4,11 +4,14 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.AlarmManager;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
@@ -39,6 +42,11 @@ public class ParkingSpotsActivity extends AppCompatActivity {
     ArrayList<View> spotViewList;
     Context context;
     DatabaseReference reference;
+
+    PendingIntent recurringDownload;
+
+    AlarmManager alarms;
+    Intent downloader;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,6 +64,12 @@ public class ParkingSpotsActivity extends AppCompatActivity {
             NotificationManager notificationManager = getSystemService(NotificationManager.class);
             notificationManager.createNotificationChannel(channel);
         }
+
+        downloader = new Intent(getApplicationContext(), AlarmReceiver.class);
+        recurringDownload = PendingIntent.getBroadcast(getApplicationContext(),
+                0, downloader, PendingIntent.FLAG_CANCEL_CURRENT);
+        alarms = (AlarmManager) getApplication().getSystemService(
+                Context.ALARM_SERVICE);
 
         mAuth = FirebaseAuth.getInstance();
         reference = database.getReference();
@@ -154,6 +168,14 @@ public class ParkingSpotsActivity extends AppCompatActivity {
                                                         database.getReference("users").child(mAuth.getUid()).child("car").removeValue();
                                                         database.getReference("spots").child(spotList.get(finalI1).getKey()).child("by").removeValue();
                                                         database.getReference("spots").child(spotList.get(finalI1).getKey()).child("available").setValue(true);
+//                                                    Intent downloader = new Intent(getApplicationContext(), AlarmReceiver.class);
+//                                                    recurringDownload = PendingIntent.getBroadcast(getApplicationContext(),
+//                                                            0, downloader, PendingIntent.FLAG_CANCEL_CURRENT);
+                                                        alarms.cancel(recurringDownload);
+                                                    SharedPreferences pref = context.getSharedPreferences("hours",0);
+                                                    SharedPreferences.Editor editor = pref.edit();
+                                                    editor.putInt("hours", 1);
+                                                    editor.commit();
                                                 }
                                             })
                                             .setNegativeButton(getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
@@ -229,6 +251,15 @@ public class ParkingSpotsActivity extends AppCompatActivity {
                                 reference.child("users").child(mAuth.getUid()).child("car").setValue(new Car(spotList.get(finalI).getKey(), dateFormat.format(cal.getTime())));
                                 reference.child("spots").child(spotList.get(finalI).getKey()).child("available").setValue(false);
                                 reference.child("spots").child(spotList.get(finalI).getKey()).child("by").setValue(mAuth.getUid());
+
+//                                Intent downloader = new Intent(getApplicationContext(), AlarmReceiver.class);
+//                                recurringDownload = PendingIntent.getBroadcast(getApplicationContext(),
+//                                        0, downloader, PendingIntent.FLAG_CANCEL_CURRENT);
+//                                alarms = (AlarmManager) getApplication().getSystemService(
+//                                        Context.ALARM_SERVICE);
+                                alarms.setRepeating(AlarmManager.RTC_WAKEUP,
+                                        1000,
+                                        10000, recurringDownload);
 
                                 dialog.cancel();
                                 finish();
